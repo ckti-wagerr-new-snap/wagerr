@@ -43,7 +43,7 @@ diff --git a/src/main/blockchain/daemon.js b/src/main/blockchain/daemon.js
 index b74b39e..0815bf2 100755
 --- a/src/main/blockchain/daemon.js
 +++ b/src/main/blockchain/daemon.js
-@@ -18,11 +18,11 @@ export default class Daemon {
+@@ -18,11 +18,11 @@
    constructor() {}
  
    /**
@@ -58,7 +58,7 @@ index b74b39e..0815bf2 100755
          'Confirm the cli params',
          blockchain.rpcUser,
 
-@@ -45,12 +45,12
+@@ -45,12 +45,12 @@
          console.log(`Daemon closing code: ${code}`);
          // Here you can get the exit code of the script
        });
@@ -73,7 +73,7 @@ index b74b39e..0815bf2 100755
      const wagerrdArgs = this.getWagerrdArgs(args);
  
      console.log(`\x1b[32m Launching daemon: ${wagerrdPath}\x1b[32m`);
-@@ -62,7 +62,7 @@ export default class Daemon {
+@@ -62,7 +62,7
          console.error(err);
        }
  
@@ -82,7 +82,7 @@ index b74b39e..0815bf2 100755
        this.wagerrdProcess = spawn(wagerrdPath, wagerrdArgs);
        this.wagerrdProcess.stdout.on('data', data =>
          console.log(`Daemon: ${data}`)
-@@ -76,14 +76,14 @@ export default class Daemon {
+@@ -76,14 +76,14 @@
    }
  
    /**
@@ -99,7 +99,7 @@ index b74b39e..0815bf2 100755
  
        // Call wagerr cli to stop the wagerr daemon.
        const wagerrcliProcess = spawn(cliPath, [
-@@ -95,7 +95,7 @@ export default class Daemon {
+@@ -95,7 +95,7 @@
        wagerrcliProcess.stdout.on('data', data =>
          console.log(`Daemon: ${data}`)
        );
