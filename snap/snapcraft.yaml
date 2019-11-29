@@ -326,6 +326,8 @@ parts:
       else
         echo "RUN TESTS disabled, skipping"
       fi
+      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.desktop $SNAPCRAFT_STAGE
+      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.png $SNAPCRAFT_STAGE
 
   wagerr-electron-app:
     source: https://github.com/wagerr/wagerr-electron-app.git
@@ -359,8 +361,9 @@ parts:
         $APPIMAGE --appimage-extract
         mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
         find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
-        cp $SNAPCRAFT_PART_BUILD/snap/local/desktop/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
-        cp $SNAPCRAFT_PART_BUILD/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/app/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "i686-linux-gnu" ]; then
         # build using npm
