@@ -350,7 +350,7 @@ parts:
         ln -s ../../../bin/wagerr-cli ./bin/wagerr-cli
         npm install
         npm run package
-        #mkdir $SNAPCRAFT_PART_INSTALL/app
+        mkdir $SNAPCRAFT_PART_INSTALL/app
         cd release
         APPIMAGE=$(find . -name *x86_64*.AppImage)
         chmod a+x $APPIMAGE
