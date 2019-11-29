@@ -58,7 +58,7 @@ index b74b39e..0815bf2 100755
          'Confirm the cli params',
          blockchain.rpcUser,
 
-@@ -45,12 +45,12 @@ export default class Daemon {
+@@ -45,12 +45,12
          console.log(`Daemon closing code: ${code}`);
          // Here you can get the exit code of the script
        });
