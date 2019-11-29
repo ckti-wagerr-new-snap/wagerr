@@ -54,9 +54,10 @@ index b74b39e..0815bf2 100755
      return new Promise(async resolve => {
 -      const cliPath = this.getExecutablePath('wagerr-cli');
 +      const cliPath = this.getExecutablePath('wagerr.cli');
-       // Call wagerr cli to stop the wagerr daemon.
-       const wagerrcliProcess = spawn(cliPath, [
-         `-rpcuser=${blockchain.rpcUser}`,
+       console.log(
+         'Confirm the cli params',
+         blockchain.rpcUser,
+
 @@ -45,12 +45,12 @@ export default class Daemon {
          console.log(`Daemon closing code: ${code}`);
          // Here you can get the exit code of the script
@@ -65,7 +66,7 @@ index b74b39e..0815bf2 100755
 +      // Wait while the wagerr.daemon exits as this can varying in time.
      });
    }
- 
+
    launch(args) {
 -    const wagerrdPath = this.getExecutablePath('wagerrd');
 +    const wagerrdPath = this.getExecutablePath('wagerr.daemon');
@@ -111,17 +112,17 @@ diff --git a/src/main/index.js b/src/main/index.js
 index f27e172..8521cf2 100644
 --- a/src/main/index.js
 +++ b/src/main/index.js
-@@ -124,7 +124,7 @@ async function createMainWindow() {
+@@ -146,7 +146,7 @@
  
  /**
   * Start the Wagerr daemon and render the UI so the Wagerr Vue App can communicate with
 - * the RPC functions exposed by wagerrd.
-+ * the RPC functions exposed by wagerr.daemon.
++ * the RPC functions exposed by wagerr.daemon
   *
   * @returns {Promise<void>}
   */
-@@ -132,13 +132,13 @@ async function init(args) {
-   console.log('\x1b[32mInitialising Wagerr Electron App...\x1b[0m');
+@@ -154,13 +154,13 @@
+   logger.info('Initialising Wagerr Electron App');
    daemon = new Daemon();
  
 -  // Check if the wagerrd binary exists.
@@ -132,13 +133,13 @@ index f27e172..8521cf2 100644
 +  const wagerrcliExe = daemon.getExecutablePath('wagerr.cli');
  
    if (!fs.existsSync(wagerrExe) || !fs.existsSync(wagerrcliExe)) {
-     console.error(
--      '\x1b[32mThe wagerrd and wagerr-cli binaries do not exist. Please download and place in the bin directory.\x1b[0m'
-+      '\x1b[32mThe wagerr.daemon and wagerr.cli binaries do not exist. Please download and place in the bin directory.\x1b[0m'
+     logger.error(
+-      'The wagerrd and wagerr-cli binaries do not exist. Please download and place in the bin directory.'
++      'The wagerr.daemon and wagerrr.cli binaries do not exist. Please download and place in the bin directory.'
      );
      process.exit(1);
    }
-@@ -159,7 +159,7 @@ async function init(args) {
+@@ -181,7 +181,7 @@
    if (!isRunning) {
      daemon.launch(args);
    } else {
@@ -147,75 +148,75 @@ index f27e172..8521cf2 100644
      forcelyQuit = true;
      errors.deamonRunningError();
    }
-@@ -230,7 +230,7 @@ ipcMain.on('salvage-wallet', async (event, arg) => {
+@@ -270,7 +270,7 @@
      global.restarting = true;
  
      await daemon.stop().catch(function() {
--      console.log('Wagerrd may not have shutdown correctly.');
-+      console.log('wagerr.daemon may not have shutdown correctly.');
+-      logger.warn('wagerrd may not have shutdown correctly.');
++      logger.warn('wagerr.daemon may not have shutdown correctly.');
      });
      await mainWindow.close();
      await init(arg);
-@@ -252,7 +252,7 @@ ipcMain.on('rescan-blockchain', async (event, arg) => {
+@@ -292,7 +292,7 @@
      global.restarting = true;
  
      await daemon.stop().catch(function() {
--      console.log('Wagerrd may not have shutdown correctly.');
-+      console.log('wagerr.daemon may not have shutdown correctly.');
+-      logger.warn('wagerrd may not have shutdown correctly.');
++      logger.warn('wagerr.daemon may not have shutdown correctly.');
      });
      await mainWindow.close();
      await init(arg);
-@@ -275,7 +275,7 @@ ipcMain.on('recover-tx-1', async (event, arg) => {
+@@ -315,7 +315,7 @@
      global.restarting = true;
  
      await daemon.stop().catch(function() {
--      console.log('Wagerrd may not have shutdown correctly.');
-+      console.log('wagerr.daemon may not have shutdown correctly.');
+-      logger.warn('wagerrd may not have shutdown correctly.');
++      logger.warn('wagerr.daemon may not have shutdown correctly.');
      });
      await mainWindow.close();
      await init(arg);
-@@ -297,7 +297,7 @@ ipcMain.on('recover-tx-2', async (event, arg) => {
+@@ -337,7 +337,7 @@
      global.restarting = true;
  
      await daemon.stop().catch(function() {
--      console.log('Wagerrd may not have shutdown correctly.');
-+      console.log('wagerr.daemon may not have shutdown correctly.');
+-      logger.warn('wagerrd may not have shutdown correctly.');
++      logger.warn('wagerr.daemon may not have shutdown correctly.');
      });
      await mainWindow.close();
      await init(arg);
-@@ -319,7 +319,7 @@ ipcMain.on('upgrade-wallet', async (event, arg) => {
+@@ -359,7 +359,7 @@
      global.restarting = true;
  
      await daemon.stop().catch(function() {
--      console.log('Wagerrd may not have shutdown correctly.');
-+      console.log('wagerr.daemon may not have shutdown correctly.');
+-      logger.warn('wagerrd may not have shutdown correctly.');
++      logger.warn('wagerr.daemon may not have shutdown correctly.');
      });
      await mainWindow.close();
      await init(arg);
-@@ -341,7 +341,7 @@ ipcMain.on('reindex-blockchain', async (event, arg) => {
+@@ -381,7 +381,7 @@
      global.restarting = true;
  
      await daemon.stop().catch(function() {
--      console.log('Wagerrd may not have shutdown correctly.');
-+      console.log('wagerr.daemon may not have shutdown correctly.');
+-      logger.warn('wagerrd may not have shutdown correctly.');
++      logger.warn('wagerr.daemon may not have shutdown correctly.');
      });
      await mainWindow.close();
      await init(arg);
-@@ -363,7 +363,7 @@ ipcMain.on('resync-blockchain', async (event, arg) => {
+@@ -403,7 +403,7 @@
      global.restarting = true;
  
      await daemon.stop().catch(function() {
--      console.log('Wagerrd may not have shutdown correctly.');
-+      console.log('wagerr.daemon may not have shutdown correctly.');
+-      logger.warn('wagerrd may not have shutdown correctly.');
++      logger.warn('wagerr,daemon may not have shutdown correctly.');
      });
      await mainWindow.close();
      await init(arg);
-@@ -385,7 +385,7 @@ ipcMain.on('restart-wagerrd', async (event, arg) => {
+@@ -425,7 +425,7 @@
      global.restarting = true;
  
      await daemon.stop().catch(function() {
--      console.log('Wagerrd may not have shutdown correctly.');
-+      console.log('wagerr.daemon may not have shutdown correctly.');
+-      logger.warn('wagerrd may not have shutdown correctly.');
++      logger.warn('wagerr.daemon may not have shutdown correctly.');
      });
      await mainWindow.close();
      await init(arg);
