@@ -189,6 +189,8 @@ parts:
       else
         HOST="${SNAPCRAFT_ARCH_TRIPLET}"
       fi
+      update-alternatives install /usr/bin/gcc gcc /usr/bin/gcc-8
+      update-alternatives install /usr/bin/g++ g++ /usr/bin/g++-8
       echo "-----------------------------------------------"
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
       echo "APPLY PATCHES ${BINPREF}-${SNAPCRAFT_PROJECT_VERSION}" # patches which have to be applied for compilation, replace splash screen
@@ -306,72 +308,106 @@ parts:
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
       echo "WAGERR SPECIFIC"
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
-      echo "get wagerr electron wallet"
-      if [ $HOST = "i686-linux-gnu" ]; then
-        git clone https://github.com/wagerr/wagerr-electron-app.git
-        mkdir -p ./wagerr-electron-app/bin
-        cp -f ${SNAPCRAFT_PART_INSTALL}/bin/wagerrd ./wagerr-electron-app/bin/wagerrd
-        cp -f ${SNAPCRAFT_PART_INSTALL}/bin/wagerr-cli ./wagerr-electron-app/bin/wagerr-cli
-        cd wagerr-electron-app
-        #git apply $SNAPCRAFT_PART_BUILD/snap/local/patches/X004-electron-snap-patch.patch
+
+  electron:
+    source: https://github.com/wagerr/wagerr-electron-app.git
+    source-type: git
+    source-tag: v1.1.2
+    plugin: nil
+
+    override-build: |
+      git apply $SNAPCRAFT_PROJECT_DIR/snap/local/patches/X001_snap_electron.patch
+      if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
+        HOST="i686-linux-gnu"
+      else
+        HOST="${SNAPCRAFT_ARCH_TRIPLET}"
+      fi
+      if [ $HOST = "x86_64-linux-gnu" ]; then
+        mkdir bin
+        cp -p ../bin/* ./bin
+        # build using npm
         npm install
         npm run package
-        cd release
-        APPIMAGE=$(find *i386*.AppImage)
-        chmod a+x $APPIMAGE
-        $APPIMAGE --appimage-extract
-        mv -f ./squashfs-root/* ${SNAPCRAFT_PART_INSTALL}
-        ls *.AppImage
-        cp -f $APPIMAGE ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app.AppImage
-        cd ..
-      elif [ $HOST = "x86_64-linux-gnu" ]; then
-        git clone https://github.com/wagerr/wagerr-electron-app.git
-        mkdir -p ./wagerr-electron-app/bin
-        cp -f ${SNAPCRAFT_PART_INSTALL}/bin/wagerrd ./wagerr-electron-app/bin/wagerrd
-        cp -f ${SNAPCRAFT_PART_INSTALL}/bin/wagerr-cli ./wagerr-electron-app/bin/wagerr-cli
-        cd wagerr-electron-app
-        #git apply $SNAPCRAFT_PART_BUILD/snap/local/patches/X004-electron-snap-patch.patch
-        npm install
-        npm run package
+        mkdir $SNAPCRAFT_PART_INSTALL/app
         cd release
         APPIMAGE=$(find *x86_64*.AppImage)
         chmod a+x $APPIMAGE
-        $APPIMAGE --appimage-extract
-        mv -f ./squashfs-root/* ${SNAPCRAFT_PART_INSTALL}
-        ls *.AppImage
-        cp -f $APPIMAGE ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app.AppImage
-        cd ..
+        ./$APPIMAGE --appimage-extract
+        mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
+        find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
+        $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/2.10.0/loaders.cache
+      elif [ $HOST = "i686-linux-gnu" ]; then
+        wget https://github.com/wagerr/wagerr/releases/download/v3.1.0/wagerr-3.1.0-i686-pc-linux-gnu.tar.gz
+        sha256sum=8aaf651a53b8103302197a43ff93ddb48f3877cd454f1965edf9f391ee870d4b
+        sha256sumdl=`sha256sum wagerr-3.1.0-i686-pc-linux-gnu.tar.gz | awk '{print $1}'`
+        if [ $sha256sum != $sha256sumdl ] ; then
+          echo "sha256sums do not match exiting build"
+          exit 1
+        fi
+        tar -xf wagerr-3.1.0-i686-pc-linux-gnu.tar.gz
+        git clone https://github.com/wagerr/wagerr-electron-app.git
+        mkdir bin
+        cp -p wagerr-3.1.0/bin/* ./bin
+        rm -rf wagerr-3.1.0*
+        # build using npm
+        npm install
+        npm run package
+        mkdir $SNAPCRAFT_PART_INSTALL/app
+        cd release
+        APPIMAGE=$(find *i386*.AppImage)
+        chmod a+x $APPIMAGE
+        ./$APPIMAGE --appimage-extract
+        mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
+        find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
+        $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
+      elif [ $HOST = "arm-linux-gnueabihf" ]; then
+        wget https://github.com/wagerr/wagerr/releases/download/v3.1.0/wagerr-3.1.0-arm-linux-gnueabihf.tar.gz
+        sha256sum=ae0505b33cf81649c6f913b792a44ef51859683d17ac32b97ddd897d76eb3fda
+        sha256sumdl=`sha256sum wagerr-3.1.0-arm-linux-gnu.tar.gz | awk '{print $1}'`
+        if [ $sha256sum != $sha256sumdl ] ; then
+          echo "sha256sums do not match exiting build"
+          exit 1
+        fi
+        tar -xf wagerr-3.1.0-arm-linux-gnueabihf.tar.gz
+        mkdir bin
+        cp -p wagerr-3.1.0/bin/* ./bin
+        rm -rf wagerr-3.1.0*
+        # build using npm
+        npm install
+        npm run package
+        mkdir $SNAPCRAFT_PART_INSTALL/app
+        cd release
+        APPIMAGE=$(find *armv7l*.AppImage)
+        chmod a+x $APPIMAGE
+        ./$APPIMAGE --appimage-extract
+        mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
+        find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
+        $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
+      elif [ $HOST = "aarch64-linux-gnu" ]; then
+        wget https://github.com/wagerr/wagerr/releases/download/v3.1.0/wagerr-3.1.0-aarch64-linux-gnu.tar.gz
+        sha256sum=a036758284013053d37272debed67a2bbd40dca72734b068b924f6192cd15025
+        sha256sumdl=`sha256sum wagerr-3.1.0-aarch64-linux-gnu.tar.gz | awk '{print $1}'`
+        if [ $sha256sum != $sha256sumdl ] ; then
+          echo "sha256sums do not match exiting build"
+          exit 1
+        fi
+        tar -xf wagerr-3.1.0-aarch64-linux-gnu.tar.gz
+        mkdir bin
+        cp -p wagerr-3.1.0/bin/* ./bin
+        rm -rf wagerr-3.1.0*
+        # build using npm
+        npm install
+        npm run package
+        mkdir $SNAPCRAFT_PART_INSTALL/app
+        cd release
+        APPIMAGE=$(find *arm64*.AppImage)
+        chmod a+x $APPIMAGE
+        ./$APPIMAGE --appimage-extract
+        mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
+        find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
+        $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       else
-        # create dummy file for all non available platforms, temp workaround **TODO**
-        touch ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app.AppImage
-      fi
-      if [ -f ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app ]; then
-        echo "Found - ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app.AppImage"
-      else
-        # workaround to get snap successfull **TODO** should be removed later
-        touch ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app.AppImage
-      fi
-      if [ -f ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app--testnet ]; then
-        echo "Found - ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app.AppImage--testnet"
-      else
-        # workaround to get snap successfull **TODO** should be removed later
-        touch ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app.AppImage--testnet
-      fi
-      if [ -f ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app--regtest ]; then
-        echo "Found - ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app.AppImage--regtest"
-      else
-        # workaround to get snap successfull **TODO** should be removed later
-        touch ${SNAPCRAFT_PART_INSTALL}/wagerr-electron-app.AppImage--regtest
-      fi
-      echo "-----------------------------------------------"
-      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
-      echo "INSTALATION OF ${BINPREF}-${SNAPCRAFT_PROJECT_VERSION}-snap has finished" # List installed files and vars when installation is finished
-      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
-      if [ $EXTRALOG = 1 ]; then
-        find ${SNAPCRAFT_PART_INSTALL} -type f
-        env
-      else
-        echo "RUN TESTS disabled, skipping"
+        echo "${HOST} unsupported"
       fi
     build-packages:
       - curl
