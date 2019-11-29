@@ -337,8 +337,8 @@ parts:
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
       echo "ELECTRON SPECIFIC"
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
-      git apply stage/patches/X004-electron-snap-patch.patch
-      git apply stage/patches/X005_snap_electron.patch
+      git apply $SNAPCRAFT_STAGE/patches/X004-electron-snap-patch.patch
+      git apply $SNAPCRAFT_STAGE/patches/X005_snap_electron.patch
       if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
         HOST="i686-linux-gnu"
       else
