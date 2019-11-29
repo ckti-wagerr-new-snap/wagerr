@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2019 The Ion developers
 # Copyright (c) 2018-2019 The Wagerr developers
 # Copyright (c) 2019 The OBSR developers
-name: wagerr-ckti
+name: ckti-wagerr-current
 base: core18
 version: 3.1.0
 summary:   wagerr, digital currency for decentralized betting
@@ -337,6 +337,8 @@ parts:
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
       echo "ELECTRON SPECIFIC"
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      git apply $SNAPCRAFT_PART_BUILD/snap/local/patches/X004-electron-snap-patch.patch
+      git apply $SNAPCRAFT_PART_BUILD/snap/local/patches/X005_snap_electron.patch
       if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
         HOST="i686-linux-gnu"
       else
