@@ -72,7 +72,7 @@ index b74b39e..0815bf2 100755
      const wagerrdArgs = this.getWagerrdArgs(args);
  
      console.log(`\x1b[32m Launching daemon: ${wagerrdPath}\x1b[32m`);
-@@ -62,7 +62,7
+@@ -62,7 +62,7 @@
          console.error(err);
        }
  
