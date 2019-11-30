@@ -326,8 +326,8 @@ parts:
       else
         echo "RUN TESTS disabled, skipping"
       fi
-      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.desktop $SNAPCRAFT_STAGE
-      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.png $SNAPCRAFT_STAGE
+      cp $SNAPCRAFT_PART_INSTALL/wagerr-electron-app.desktop $SNAPCRAFT_STAGE
+      cp $SNAPCRAFT_PART_INSTALL/wagerr-electron-app.png $SNAPCRAFT_STAGE
 
   wagerr-electron-app:
     source: https://github.com/wagerr/wagerr-electron-app.git
