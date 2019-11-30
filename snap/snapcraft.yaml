@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2019 The Ion developers
 # Copyright (c) 2018-2019 The Wagerr developers
 # Copyright (c) 2019 The OBSR developers
-name: ckti-wagerr-current
+name: wagerr
 base: core18
 version: 3.1.0
 summary:   wagerr, digital currency for decentralized betting
@@ -101,7 +101,7 @@ apps:
       QT_XKB_CONFIG_ROOT: $SNAP_USER_DATA:$SNAP/usr/share:$QT_XKB_CONFIG_ROOT
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
   electron:
-    command: app/wagerr-electron-app
+    command: app/wagerr-electron-app --no-sandbox
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
     desktop: wagerr-electron-app.desktop
     environment:
@@ -339,7 +339,7 @@ parts:
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
       echo "ELECTRON SPECIFIC"
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
-      git apply $SNAPCRAFT_STAGE/X004-electron-snap-patch.patch
+      #git apply $SNAPCRAFT_STAGE/X004-electron-snap-patch.patch
       git apply $SNAPCRAFT_STAGE/X005-snap_electron.patch
       if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
         HOST="i686-linux-gnu"
@@ -379,8 +379,9 @@ parts:
         $APPIMAGE --appimage-extract
         mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
         find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
-        cp $SNAPCRAFT_PART_BUILD/snap/local/desktop/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
-        cp $SNAPCRAFT_PART_BUILD/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/app/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "arm-linux-gnueabihf" ]; then
         # build using npm
@@ -396,8 +397,9 @@ parts:
         $APPIMAGE --appimage-extract
         mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
         find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
-        cp $SNAPCRAFT_PART_BUILD/snap/local/desktop/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
-        cp $SNAPCRAFT_PART_BUILD/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/app/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "aarch64-linux-gnu" ]; then
         # build using npm
@@ -413,8 +415,9 @@ parts:
         $APPIMAGE --appimage-extract
         mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
         find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
-        cp $SNAPCRAFT_PART_BUILD/snap/local/desktop/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
-        cp $SNAPCRAFT_PART_BUILD/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/app/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       else
         mkdir $SNAPCRAFT_PART_INSTALL/app
