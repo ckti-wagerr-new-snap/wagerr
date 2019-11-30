@@ -333,7 +333,7 @@ parts:
     plugin: nil
 
     override-build: |
-      git apply $SNAPCRAFT_PROJECT_DIR/snap/local/patches/X005_snap_electron.patch
+      git apply $SNAPCRAFT_STAGE/X005_snap_electron.patch
       if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
         HOST="i686-linux-gnu"
       else
