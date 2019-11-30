@@ -120,25 +120,25 @@ apps:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   cli:
-    command: app/resources/bin/wagerr-cli
+    command: wagerr-cli
     plugs: [network, network-bind, home, removable-media]
     environment:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
   cli-testnet:
-    command: app/resources/bin/wagerr-cli --testnet
+    command: wagerr-cli --testnet
     plugs: [network, network-bind, home, removable-media]
     environment:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
   cli-regtest:
-    command: app/resources/bin/wagerr-cli --regtest
+    command: wagerr-cli --regtest
     plugs: [network, network-bind, home, removable-media]
     environment:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
   tx:
-    command: app/resources/bin/wagerr-tx
+    command: wagerr-tx
     plugs: [home]
   test:
-    command: app/resources/bin/test_wagerr
+    command: test_wagerr
     plugs: [home]
 
 layout:
@@ -323,8 +323,8 @@ parts:
       else
         echo "RUN TESTS disabled, skipping"
       fi
-      cp $SNAPCRAFT_PART_INSTALL/wagerr-electron-app.desktop $SNAPCRAFT_STAGE
-      cp $SNAPCRAFT_PART_INSTALL/wagerr-electron-app.png $SNAPCRAFT_STAGE
+      #cp $SNAPCRAFT_PART_INSTALL/wagerr-electron-app.desktop $SNAPCRAFT_STAGE
+      #cp $SNAPCRAFT_PART_INSTALL/wagerr-electron-app.png $SNAPCRAFT_STAGE
 
   wagerr-electron-app:
     source: https://github.com/wagerr/wagerr-electron-app.git
