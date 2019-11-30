@@ -55,10 +55,12 @@ base: core18
 apps:
   daemon:
     command: wagerrd
-    plugs: [network, network-bind, home, removable-media]
+    #plugs: [network, network-bind, home, removable-media]
+    plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
     #desktop: wagerrd.desktop
     environment:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   daemon-testnet:
     command: wagerrd --testnet
     plugs: [network, network-bind, home, removable-media]
