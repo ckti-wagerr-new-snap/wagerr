@@ -1,17 +1,17 @@
 # Copyright (c) 2018-2019 The Ion developers
 # Copyright (c) 2018-2019 The Wagerr developers
 # Copyright (c) 2019 The OBSR developers
-name: wagerr-ckti
-version: '3.1.0'
-
+name: wagerr
+base: core18
+version: 3.1.0
 summary:   wagerr, digital currency for decentralized betting
 description: |
-  Wagerr is a decentralized sportsbook that changes
-  the way the world bets on sports.
+  Wagerr is a decentralized sportsbook that changes the way the world
+  bets on sports.
   
   - built for everyone.
-    Wagerr uses distributed blockchain technology to
-    execute betting contracts. It escrows
+    Wagerr uses distributed blockchain technology to execute 
+    betting contracts. It escrows
     stakes, verifies results, and pays out winners. By eliminating
     centralauthorities, Wagerr solves the most pernicious problems in
     the industry. Reducing corruption and risk results in predictable
@@ -47,10 +47,18 @@ description: |
   - reddit (https://www.reddit.com/r/Wagerr/)
   - bitcointalk (https://bitcointalk.org/index.php?topic=1911583.0)
   - facebook (https://www.facebook.com/wagerr/)
-
-confinement: strict
 grade: stable
-base: core18
+confinement: strict
+
+layout:
+  /usr/lib/dri:
+    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri
+
+#plugs:
+#  config-electron:
+#    interface: personal-files
+#    write:
+#    - $HOME/.config/wagerr-electron-app
 
 apps:
   daemon:
@@ -73,28 +81,25 @@ apps:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
   qt:
     command: wagerr-qt
-    plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
+    plugs: [network, network-bind, network-status, unity7, desktop, desktop-legacy, wayland, x11, mir, opengl, home, gsettings, removable-media, screen-inhibit-control, pulseaudio, media-hub]
     desktop: wagerr-qt.desktop
     environment:
       QT_XKB_CONFIG_ROOT: $SNAP_USER_DATA:$SNAP/usr/share:$QT_XKB_CONFIG_ROOT
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   qt-testnet:
     command: wagerr-qt --testnet
-    plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
+    plugs: [network, network-bind, network-status, unity7, desktop, desktop-legacy, wayland, x11, mir, opengl, home, gsettings, removable-media, screen-inhibit-control, pulseaudio, media-hub]
     desktop: wagerr-qt_testnet.desktop
     environment:
       QT_XKB_CONFIG_ROOT: $SNAP_USER_DATA:$SNAP/usr/share:$QT_XKB_CONFIG_ROOT
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   qt-regtest:
     command: wagerr-qt --regtest
-    plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
+    plugs: [network, network-bind, network-status, unity7, desktop, desktop-legacy, wayland, x11, mir, opengl, home, gsettings, removable-media, screen-inhibit-control, pulseaudio, media-hub]
     desktop: wagerr-qt_regtest.desktop
     environment:
       QT_XKB_CONFIG_ROOT: $SNAP_USER_DATA:$SNAP/usr/share:$QT_XKB_CONFIG_ROOT
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   electron:
     command: app/wagerr-electron-app --no-sandbox
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
@@ -104,47 +109,45 @@ apps:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   electron-testnet:
-    command: app/wagerr-electron-app --no-sandbox --testnet
+    command: app/wagerr-electron-app --testnet --no-sandbox
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
-    desktop: wagerr-electron-app.desktop
+    desktop: wagerr-electron-app_testnet.desktop
     environment:
       QT_XKB_CONFIG_ROOT: $SNAP_USER_DATA:$SNAP/usr/share:$QT_XKB_CONFIG_ROOT
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   electron-regtest:
-    command: app/wagerr-electron-app --no-sandbox --regtest
+    command: app/wagerr-electron-app --regtest --no-sandbox
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
-    desktop: wagerr-electron-app.desktop
+    desktop: wagerr-electron-app_regtest.desktop
     environment:
       QT_XKB_CONFIG_ROOT: $SNAP_USER_DATA:$SNAP/usr/share:$QT_XKB_CONFIG_ROOT
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   cli:
-    command: app/resources/bin/wagerr-cli
+    command: wagerr-cli
     plugs: [network, network-bind, home, removable-media]
     environment:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
   cli-testnet:
-    command: app/resources/bin/wagerr-cli --testnet
+    command: wagerr-cli --testnet
     plugs: [network, network-bind, home, removable-media]
     environment:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
   cli-regtest:
-    command: app/resources/bin/wagerr-cli --regtest
+    command: wagerr-cli --regtest
     plugs: [network, network-bind, home, removable-media]
     environment:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
   tx:
-    command: app/resources/bin/wagerr-tx
+    command: wagerr-tx
     plugs: [home]
   test:
-    command: app/resources/bin/test_wagerr
+    command: test_wagerr
     plugs: [home]
-
-layout:
-  /usr/lib/dri:
-    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri
-
+  testqt:
+    command: test_wagerr-qt
+    plugs: [home]
 parts:
 
   wagerr:
@@ -331,80 +334,120 @@ parts:
     source-type: git
     source-tag: v1.1.2
     plugin: nil
-
     override-build: |
-      git apply $SNAPCRAFT_PROJECT_DIR/snap/local/patches/X005_snap_electron.patch
+      echo "-----------------------------------------------"
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      echo "ELECTRON SPECIFIC"
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      #git apply $SNAPCRAFT_STAGE/X004-electron-snap-patch.patch
+      git apply $SNAPCRAFT_STAGE/X005-snap_electron.patch
       if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
         HOST="i686-linux-gnu"
       else
         HOST="${SNAPCRAFT_ARCH_TRIPLET}"
       fi
+      echo $HOST
       if [ $HOST = "x86_64-linux-gnu" ]; then
+        # build using npm
         mkdir bin
         ln -s ../../../bin/wagerrd ./bin/wagerrd
         ln -s ../../../bin/wagerr-cli ./bin/wagerr-cli
-        # build using npm
         npm install
         npm run package
         mkdir $SNAPCRAFT_PART_INSTALL/app
         cd release
-        APPIMAGE=$(find *x86_64*.AppImage)
+        APPIMAGE=$(find . -name *x86_64*.AppImage)
         chmod a+x $APPIMAGE
-        ./$APPIMAGE --appimage-extract
+        $APPIMAGE --appimage-extract
         mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
         find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/app/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "i686-linux-gnu" ]; then
+        # build using npm
         mkdir bin
-        cp -p wagerr-3.1.0/bin/* ./bin
-        rm -rf wagerr-3.1.0*
         ln -s ../../../bin/wagerrd ./bin/wagerrd
         ln -s ../../../bin/wagerr-cli ./bin/wagerr-cli
-        # build using npm
         npm install
         npm run package
         mkdir $SNAPCRAFT_PART_INSTALL/app
         cd release
-        APPIMAGE=$(find *i386*.AppImage)
+        APPIMAGE=$(find . -name *i386*.AppImage)
         chmod a+x $APPIMAGE
-        ./$APPIMAGE --appimage-extract
+        $APPIMAGE --appimage-extract
         mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
         find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/app/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "arm-linux-gnueabihf" ]; then
+        # build using npm
+        mkdir bin
         ln -s ../../../bin/wagerrd ./bin/wagerrd
         ln -s ../../../bin/wagerr-cli ./bin/wagerr-cli
-        # build using npm
         npm install
         npm run package
         mkdir $SNAPCRAFT_PART_INSTALL/app
         cd release
-        APPIMAGE=$(find *armv7l*.AppImage)
+        APPIMAGE=$(find . -name *armv7l*.AppImage)
         chmod a+x $APPIMAGE
-        ./$APPIMAGE --appimage-extract
+        $APPIMAGE --appimage-extract
         mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
         find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/app/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "aarch64-linux-gnu" ]; then
+        # build using npm
+        mkdir bin
         ln -s ../../../bin/wagerrd ./bin/wagerrd
         ln -s ../../../bin/wagerr-cli ./bin/wagerr-cli
-        # build using npm
         npm install
         npm run package
         mkdir $SNAPCRAFT_PART_INSTALL/app
         cd release
-        APPIMAGE=$(find *arm64*.AppImage)
+        APPIMAGE=$(find . -name *arm64*.AppImage)
         chmod a+x $APPIMAGE
-        ./$APPIMAGE --appimage-extract
+        $APPIMAGE --appimage-extract
         mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
         find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/
+        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL/app/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       else
-        echo "${HOST} unsupported"
-        echo "${HOST} unsupported" > $SNAPCRAFT_PART_INSTALL/wagerr-electron-app
-        chmod +x SNAPCRAFT_PART_INSTALL/wagerr-electron-app
+        mkdir $SNAPCRAFT_PART_INSTALL/app
+        echo "$HOST unsupported by electron (no pre-built images)"
+        echo "$HOST unsupported by electron (no pre-built images)" > $SNAPCRAFT_PART_INSTALL/app/wagerr-electron-app
+        chmod +x $SNAPCRAFT_PART_INSTALL/app/wagerr-electron-app
       fi
 
+    build-packages:
+      - curl
+      - wget
+      - gcc
+      - gcc-8
+      - g++
+      - g++-8
+      - make
+      - autoconf
+      - automake
+      - cmake
+      - pkg-config
+      - libtool
+      - bsdmainutils
+      - binutils
+      - python3
+      - help2man
+      - doxygen
+      - npm
+      - libts-dev
+      - libgtk-3-dev
+      - libgdk-pixbuf2.0-dev
     stage-packages:
       - libxkbcommon0
       - ttf-ubuntu-font-family
@@ -423,29 +466,8 @@ parts:
       - libxss1
       - libasound2
       - libglu1-mesa
+      - libgconf-2-4
 
-    build-packages:
-      - curl
-      - wget
-      - gcc
-      - gcc-8
-      - g++
-      - g++-8
-      - git
-      - make
-      - autoconf
-      - automake
-      - cmake
-      - pkg-config
-      - libtool
-      - bsdmainutils
-      - binutils
-      - python3
-      - help2man
-      - doxygen
-      - npm
-      - libgtk-3-dev
-      - libgdk-pixbuf2.0-dev
     after:
       - patches
   patches:
@@ -456,4 +478,3 @@ parts:
   desktop:
     source: snap/local/desktop
     plugin: dump
-
