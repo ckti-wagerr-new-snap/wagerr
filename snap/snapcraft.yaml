@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2019 The Ion developers
 # Copyright (c) 2018-2019 The Wagerr developers
 # Copyright (c) 2019 The OBSR developers
-name: ckti-wagerr-current
+name: wagerr
 version: '3.1.0'
 
 summary:   wagerr, digital currency for decentralized betting
@@ -323,8 +323,12 @@ parts:
       else
         echo "RUN TESTS disabled, skipping"
       fi
-      cp $SNAPCRAFT_PART_INSTALL/wagerr-electron-app.desktop $SNAPCRAFT_STAGE
-      cp $SNAPCRAFT_PART_INSTALL/wagerr-electron-app.png $SNAPCRAFT_STAGE
+      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.desktop $SNAPCRAFT_STAGE
+      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.png $SNAPCRAFT_STAGE
+      echo "-----------------------------------------------"
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      echo "WAGERR SPECIFIC"
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
 
   wagerr-electron-app:
     source: https://github.com/wagerr/wagerr-electron-app.git
