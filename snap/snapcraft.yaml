@@ -96,7 +96,7 @@ apps:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   electron:
-    command: wagerr-electron-app --no-sandbox
+    command: wagerr-electron-launch --no-sandbox
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
     desktop: wagerr-electron-app.desktop
     environment:
@@ -338,7 +338,7 @@ parts:
 
     override-build: |
       git apply $SNAPCRAFT_STAGE/X005-snap_electron.patch
-      git apply $SNAPCRAFT_STAGE/Z001-Change-blockchain-folder-and-bins-to-snap.patch
+      #git apply $SNAPCRAFT_STAGE/Z001-Change-blockchain-folder-and-bins-to-snap.patch
       curl -sL https://deb.nodesource.com/setup_10.x | bash -
       apt-get -y install nodejs
       if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
@@ -348,8 +348,8 @@ parts:
       fi
       if [ $HOST = "x86_64-linux-gnu" ]; then
         mkdir bin
-        #ln -s ../../bin/wagerrd ./bin/wagerrd
-        #ln -s ../../bin/wagerr-cli ./bin/wagerr-cli
+        ln -s ../../bin/wagerrd ./bin/wagerrd
+        ln -s ../../bin/wagerr-cli ./bin/wagerr-cli
         # build using npm
         npm install
         npm run package
@@ -370,6 +370,9 @@ parts:
         #cp -v $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL
         #cp -v $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_BUILD/release/squashfs-root/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/2.10.0/loaders.cache
+        echo "/bin/bash" > $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
+        echo "/snap/wagerr/current/wagerr-electron-app &" >> $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
+        chmod +x $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
       elif [ $HOST = "i686-linux-gnu" ]; then
         mkdir bin
         cp -p wagerr-3.1.0/bin/* ./bin
