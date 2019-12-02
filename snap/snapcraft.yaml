@@ -336,6 +336,8 @@ parts:
 
     override-build: |
       git apply $SNAPCRAFT_STAGE/X005-snap_electron.patch
+      curl -sL https://deb.nodesource.com/setup_10.x | bash -
+      apt-get install nodejs
       if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
         HOST="i686-linux-gnu"
       else
@@ -445,7 +447,6 @@ parts:
       - python3
       - help2man
       - doxygen
-      - npm
       - libgtk-3-dev
       - libgdk-pixbuf2.0-dev
     after:
