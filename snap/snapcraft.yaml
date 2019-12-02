@@ -148,7 +148,7 @@ layout:
 parts:
 
   wagerr:
-    source: https://github.com/ckti-wagerr-current
+    source: https://github.com/ckti-wagerr-current/wagerr.git
     source-type: git
     source-tag: snapcraft-one-dir
     plugin: nil
