@@ -1,13 +1,13 @@
-From 72a5370bf0344d9331c80588cd5f09817cc64adf Mon Sep 17 00:00:00 2001
+From c6086a849ebedca5ffa1d85c6ae6cf04bdf42ae7 Mon Sep 17 00:00:00 2001
 From: cevap <dev@i2pmail.org>
-Date: Mon, 2 Dec 2019 19:13:48 +0100
+Date: Mon, 2 Dec 2019 19:55:07 +0100
 Subject: [PATCH] Change blockchain folder and bins to snap
 
 ---
- src/main/blockchain/blockchain.js | 6 +++---
- src/main/blockchain/daemon.js     | 8 ++++----
- src/main/index.js                 | 4 ++--
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ src/main/blockchain/blockchain.js |  6 +++---
+ src/main/blockchain/daemon.js     | 10 +++++-----
+ src/main/index.js                 | 17 ++++++++---------
+ 3 files changed, 16 insertions(+), 17 deletions(-)
 
 diff --git a/src/main/blockchain/blockchain.js b/src/main/blockchain/blockchain.js
 index 4641c42..d53c3dd 100755
@@ -34,7 +34,7 @@ index 4641c42..d53c3dd 100755
      default: {
        console.log('Unsupported platform!');
 diff --git a/src/main/blockchain/daemon.js b/src/main/blockchain/daemon.js
-index c5d0145..1f0cc14 100755
+index c5d0145..99262af 100755
 --- a/src/main/blockchain/daemon.js
 +++ b/src/main/blockchain/daemon.js
 @@ -22,7 +22,7 @@ export default class Daemon {
@@ -64,20 +64,30 @@ index c5d0145..1f0cc14 100755
  
        // Call wagerr cli to stop the wagerr daemon.
        const wagerrcliProcess = spawn(cliPath, [
-@@ -118,7 +118,7 @@ export default class Daemon {
+@@ -118,8 +118,8 @@ export default class Daemon {
    getExecutablePath(name) {
      const binPath =
        process.env.NODE_ENV === 'development'
 -        ? path.join(__dirname, '..', '..', '..', 'bin')
-+        ? path.join(__dirname, '/snap/bin')
-         : path.join(process.resourcesPath, 'bin');
+-        : path.join(process.resourcesPath, 'bin');
++        ? path.join('/snap/bin')
++        : path.join('/snap/bin');
      const execName = os.platform() !== 'win32' ? name : `${name}.exe`;
  
+     return path.join(binPath, execName);
 diff --git a/src/main/index.js b/src/main/index.js
-index 4054b44..9668942 100644
+index 4054b44..759d5f4 100644
 --- a/src/main/index.js
 +++ b/src/main/index.js
-@@ -155,8 +155,8 @@ export async function init(args) {
+@@ -12,7 +12,6 @@ import {
+ import Daemon from './blockchain/daemon';
+ import { spawnLogger } from './logger/logger';
+ import menu from './menu/menu';
+-import { checkForUpdates } from './updater/updater';
+ import { version as appVersion } from '../../package.json';
+ 
+ const logger = spawnLogger();
+@@ -155,8 +154,8 @@ export async function init(args) {
    daemon = new Daemon();
  
    // Check if the wagerrd binary exists.
@@ -88,6 +98,26 @@ index 4054b44..9668942 100644
  
    if (!fs.existsSync(wagerrExe) || !fs.existsSync(wagerrcliExe)) {
      logger.error(
+@@ -201,13 +200,13 @@ app.on('ready', async () => {
+   }
+ 
+   // Check for updates only for the packaged app.
+-  if (process.env.NODE_ENV === 'production') {
+-    logger.info('Checking for an update');
+-    checkForUpdates();
+-  } else {
+-    logger.debug('Skipping update check when running in development mode');
++  //if (process.env.NODE_ENV === 'production') {
++  //  logger.info('Checking for an update');
++  //  checkForUpdates();
++  //} else {
++    logger.debug('Skipping update check when running in snap confinement');
+     await init();
+-  }
++  //}
+ });
+ 
+ // Catch the 'window-all-closed' event and (right now) do nothing with it. If
 -- 
 2.17.1
 
