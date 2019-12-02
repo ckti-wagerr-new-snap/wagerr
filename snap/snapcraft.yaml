@@ -360,16 +360,12 @@ parts:
       cd release
       if [ $HOST = "x86_64-linux-gnu" ]; then
         APPIMAGE=$(find *x86_64*.AppImage)
-        $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "i686-linux-gnu" ]; then
         APPIMAGE=$(find *i386*.AppImage)
-        $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "arm-linux-gnueabihf" ]; then
         APPIMAGE=$(find *armv7l*.AppImage)
-        $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "aarch64-linux-gnu" ]; then
         APPIMAGE=$(find *arm64*.AppImage)
-        $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       else
         echo "${HOST} unsupported"
         echo "${HOST} unsupported" > $SNAPCRAFT_PART_INSTALL/wagerr-electron-app
@@ -377,6 +373,7 @@ parts:
       fi
       chmod a+x $APPIMAGE
       ./$APPIMAGE --appimage-extract
+        $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       #mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
       #find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
       rm ./squashfs-root/wagerr-electron-app.png
