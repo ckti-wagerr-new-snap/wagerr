@@ -98,23 +98,23 @@ apps:
   electron:
     command: wagerr-electron-launch --no-sandbox
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
-    desktop: wagerr-electron-app.desktop
+    desktop: wagerr-electron-launch.desktop
     environment:
       QT_XKB_CONFIG_ROOT: $SNAP_USER_DATA:$SNAP/usr/share:$QT_XKB_CONFIG_ROOT
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   electron-testnet:
-    command: wagerr-electron-app --no-sandbox --testnet
+    command: wagerr-electron-launch --no-sandbox --testnet
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
-    desktop: wagerr-electron-app.desktop
+    desktop: wagerr-electron-launch.desktop
     environment:
       QT_XKB_CONFIG_ROOT: $SNAP_USER_DATA:$SNAP/usr/share:$QT_XKB_CONFIG_ROOT
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   electron-regtest:
-    command: wagerr-electron-app --no-sandbox --regtest
+    command: wagerr-electron-launch --no-sandbox --regtest
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
-    desktop: wagerr-electron-app.desktop
+    desktop: wagerr-electron-launch.desktop
     environment:
       QT_XKB_CONFIG_ROOT: $SNAP_USER_DATA:$SNAP/usr/share:$QT_XKB_CONFIG_ROOT
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
@@ -323,14 +323,14 @@ parts:
       else
         echo "RUN TESTS disabled, skipping"
       fi
-      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.desktop $SNAPCRAFT_STAGE
-      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.png $SNAPCRAFT_STAGE
+      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.desktop $SNAPCRAFT_STAGE/wagerr-electron-launch.desktop
+      cp $SNAPCRAFT_PART_SRC/snap/local/desktop/wagerr-electron-app.png $SNAPCRAFT_STAGE/wagerr-electron-launch.png
       echo "-----------------------------------------------"
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
       echo "ELECTRON SPECIFIC"
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
 
-  wagerr-electron-app:
+  wagerr-electron-launch:
     source: https://github.com/wagerr/wagerr-electron-app.git
     source-type: git
     source-tag: v1.1.2
@@ -346,85 +346,55 @@ parts:
       else
         HOST="${SNAPCRAFT_ARCH_TRIPLET}"
       fi
+      mkdir bin
+      ln -s ../../bin/wagerrd ./bin/wagerrd
+      ln -s ../../bin/wagerr-cli ./bin/wagerr-cli
+      # build using npm
+      echo "-----------------------------------------------"
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      echo "Build Wagerr-Electron wallet" #
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      npm install
+      npm run package
+      #mkdir $SNAPCRAFT_PART_INSTALL/app
+      cd release
       if [ $HOST = "x86_64-linux-gnu" ]; then
-        mkdir bin
-        ln -s ../../bin/wagerrd ./bin/wagerrd
-        ln -s ../../bin/wagerr-cli ./bin/wagerr-cli
-        # build using npm
-        npm install
-        npm run package
-        #mkdir $SNAPCRAFT_PART_INSTALL/app
-        cd release
         APPIMAGE=$(find *x86_64*.AppImage)
-        chmod a+x $APPIMAGE
-        ./$APPIMAGE --appimage-extract
-        #mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
-        #find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
-        rm ./squashfs-root/wagerr-electron-app.png
-        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png ./squashfs-root/
-        cp $SNAPCRAFT_STAGE/wagerr-electron-app.png ./squashfs-root/usr/share/icons/hicolor/512x512/apps/
-        cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop ./squashfs-root/
-        cp -pr ./squashfs-root/* $SNAPCRAFT_PART_INSTALL
-        find $SNAPCRAFT_PART_INSTALL -type d -exec chmod 755 {} \;
-        #cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL
-        #cp -v $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL
-        #cp -v $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_BUILD/release/squashfs-root/usr/share/icons/hicolor/512x512/apps
         $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${HOST}/gdk-pixbuf-2.0/2.10.0/loaders.cache
-        echo "#/bin/bash" > $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
-        echo "/snap/wagerr/current/wagerr-electron-app --no-sandbox &" >> $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
-        chmod +x $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
       elif [ $HOST = "i686-linux-gnu" ]; then
-        mkdir bin
-        cp -p wagerr-3.1.0/bin/* ./bin
-        rm -rf wagerr-3.1.0*
-        ln -s ../../../bin/wagerrd ./bin/wagerrd
-        ln -s ../../../bin/wagerr-cli ./bin/wagerr-cli
-        # build using npm
-        npm install
-        npm run package
-        mkdir $SNAPCRAFT_PART_INSTALL/app
-        cd release
         APPIMAGE=$(find *i386*.AppImage)
-        chmod a+x $APPIMAGE
-        ./$APPIMAGE --appimage-extract
-        mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
-        find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
         $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
-        mkdir $SNAPCRAFT_PART_INSTALL/bin
-        ln -s ../wagerr/current/wagerr-electron-app $SNAPCRAFT_PART_INSTALL/bin/wagerr.electron
       elif [ $HOST = "arm-linux-gnueabihf" ]; then
-        ln -s ../../../bin/wagerrd ./bin/wagerrd
-        ln -s ../../../bin/wagerr-cli ./bin/wagerr-cli
-        # build using npm
-        npm install
-        npm run package
-        mkdir $SNAPCRAFT_PART_INSTALL/app
-        cd release
         APPIMAGE=$(find *armv7l*.AppImage)
-        chmod a+x $APPIMAGE
-        ./$APPIMAGE --appimage-extract
-        mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
-        find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
         $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       elif [ $HOST = "aarch64-linux-gnu" ]; then
-        ln -s ../../../bin/wagerrd ./bin/wagerrd
-        ln -s ../../../bin/wagerr-cli ./bin/wagerr-cli
-        # build using npm
-        npm install
-        npm run package
-        mkdir $SNAPCRAFT_PART_INSTALL/app
-        cd release
         APPIMAGE=$(find *arm64*.AppImage)
-        chmod a+x $APPIMAGE
-        ./$APPIMAGE --appimage-extract
-        mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
-        find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
         $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/2.10.0/loaders.cache
       else
         echo "${HOST} unsupported"
         echo "${HOST} unsupported" > $SNAPCRAFT_PART_INSTALL/wagerr-electron-app
         chmod +x SNAPCRAFT_PART_INSTALL/wagerr-electron-app
       fi
+      chmod a+x $APPIMAGE
+      ./$APPIMAGE --appimage-extract
+      #mv ./squashfs-root/* $SNAPCRAFT_PART_INSTALL/app
+      #find $SNAPCRAFT_PART_INSTALL/app/ -type d -exec chmod 755 {} \;
+      rm ./squashfs-root/wagerr-electron-app.png
+      cp $SNAPCRAFT_STAGE/wagerr-electron-app.png ./squashfs-root/
+      cp $SNAPCRAFT_STAGE/wagerr-electron-app.png ./squashfs-root/usr/share/icons/hicolor/512x512/apps/
+      cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop ./squashfs-root/
+      cp -pr ./squashfs-root/* $SNAPCRAFT_PART_INSTALL
+      find $SNAPCRAFT_PART_INSTALL -type d -exec chmod 755 {} \;
+      #cp $SNAPCRAFT_STAGE/wagerr-electron-app.desktop $SNAPCRAFT_PART_INSTALL
+      #cp -v $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_INSTALL
+      #cp -v $SNAPCRAFT_STAGE/wagerr-electron-app.png $SNAPCRAFT_PART_BUILD/release/squashfs-root/usr/share/icons/hicolor/512x512/apps    
+      echo "-----------------------------------------------"
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      echo "Launch script workaround" # create launch script instead of using binary due to html rendering
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      echo "#!/bin/bash" > $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
+      echo "/snap/wagerr/current/wagerr-electron-app --no-sandbox &" >> $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
+      chmod +x $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
 
     stage-packages:
       - libxkbcommon0
