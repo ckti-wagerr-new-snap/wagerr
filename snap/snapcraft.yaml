@@ -233,6 +233,8 @@ parts:
       - bsdmainutils
       - binutils
       - python3
+      - python3-dev
+      - python-dev
       - help2man
       - doxygen
       - libgtk-3-dev
