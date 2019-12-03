@@ -157,13 +157,13 @@ parts:
       git apply ${SNAPCRAFT_STAGE}/Z002-snap_electron.patch
       curl -sL https://deb.nodesource.com/setup_10.x | bash -
       apt-get -y install nodejs
-      if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
-        HOST="i686-linux-gnu"
+      if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-pc-linux-gnu" ]; then
+        HOST="i686-pc-linux-gnu"
       else
         HOST="${SNAPCRAFT_ARCH_TRIPLET}"
       fi
       wget https://github.com/wagerr/wagerr/releases/download/v${WagerrVersion}/SHA256SUMS.asc -O SHA256SUMS.asc
-      DLfile=wagerr-${WagerrVersion}-${SNAPCRAFT_ARCH_TRIPLET}.tar.gz
+      DLfile=wagerr-${WagerrVersion}-${HOST}.tar.gz
       wget https://github.com/wagerr/wagerr/releases/download/v${WagerrVersion}/${DLfile} -O ${DLfile}
       DL256=`sha256sum ${DLfile} | awk '{print $1}'`
       REL256=`fgrep ${DLfile} SHA256SUMS.asc | awk '{print $1}'`
