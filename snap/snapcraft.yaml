@@ -96,7 +96,7 @@ apps:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   electron:
-    command: wagerr-electron-launch --no-sandbox
+    command: wagerr-electron-launch
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
     desktop: wagerr-electron-launch.desktop
     environment:
@@ -104,7 +104,7 @@ apps:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   electron-testnet:
-    command: wagerr-electron-launch --no-sandbox --testnet
+    command: wagerr-electron-launch --testnet
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
     desktop: wagerr-electron-launch.desktop
     environment:
@@ -112,7 +112,7 @@ apps:
       XDG_DATA_DIRS: $SNAP_USER_DATA:$SNAP/usr/share:$XDG_DATA_DIRS
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri:$SNAP/usr/lib"
   electron-regtest:
-    command: wagerr-electron-launch --no-sandbox --regtest
+    command: wagerr-electron-launch --regtest
     plugs: [network, network-bind,  unity7, desktop, desktop-legacy, wayland, x11, opengl, home, gsettings, screen-inhibit-control, audio-playback, system-observe, browser-support, hardware-observe ]
     desktop: wagerr-electron-launch.desktop
     environment:
@@ -381,7 +381,7 @@ parts:
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
       echo "#!/bin/bash" > $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
       echo "cd /snap/wagerr/current" >> $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
-      echo "./wagerr-electron-app ${1} ${2} &" >> $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
+      echo "./wagerr-electron-app --no-sandbox ${1} ${2} &" >> $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
       chmod +x $SNAPCRAFT_PART_INSTALL/wagerr-electron-launch
 
     stage-packages:
