@@ -154,7 +154,7 @@ parts:
 
     override-build: |
       WagerrVersion="3.1.0"
-      git apply ${SNAPCRAFT_STAGE}/Z002_snap_electron.patch
+      git apply ${SNAPCRAFT_STAGE}/Z002-snap_electron.patch
       curl -sL https://deb.nodesource.com/setup_10.x | bash -
       apt-get -y install nodejs
       if [ $SNAPCRAFT_ARCH_TRIPLET = "i386-linux-gnu" ]; then
